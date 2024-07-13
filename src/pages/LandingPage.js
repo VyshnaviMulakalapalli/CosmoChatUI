@@ -10,6 +10,11 @@ const LandingPage = () => (
         Start Chat
       </Button>
     </Link>
+    <Link to="/dashboard" style={{ textDecoration: 'none', marginLeft: '10px' }}>
+      <Button variant="contained" color="secondary">
+        View Dashboard
+      </Button>
+    </Link>
   </div>
 );
 

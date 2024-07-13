@@ -1,12 +1,17 @@
-// src/components/ChatInterface.js
-import React, { useState } from 'react';
-import { Box, TextField, IconButton, Typography, Paper, Container } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, TextField, IconButton, Typography, Paper, Container, Button } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
-import { getChatResponse } from '../api/openaiService';
+import { getChatResponse, endSession } from '../api/openaiService';
 
 const ChatInterface = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
+  const [sessionId, setSessionId] = useState(null);
+
+  useEffect(() => {
+    const newSessionId = Date.now();
+    setSessionId(newSessionId);
+  }, []);
 
   const sendMessage = async () => {
     if (input.trim() === '') return;
@@ -18,7 +23,7 @@ const ChatInterface = () => {
     setInput('');
 
     try {
-      const response = await getChatResponse(input);
+      const response = await getChatResponse(input, sessionId);
       setMessages((prevMessages) => [
         ...prevMessages,
         { content: response, type: 'ai' },
@@ -32,10 +37,20 @@ const ChatInterface = () => {
     }
   };
 
+  const terminateChat = async () => {
+    try {
+      await endSession(sessionId);
+      setMessages([]);
+      setSessionId(Date.now());
+    } catch (error) {
+      console.error('Error terminating session:', error);
+    }
+  };
+
   return (
     <Container maxWidth="md">
-      <h1 style={{ textAlign: 'center'}}>Start exploring!!</h1>
-      <Paper elevation={3} sx={{ height: '80vh', display: 'flex', flexDirection: 'column', mt: 6 }}>
+      <Typography variant="h4" style={{ textAlign: 'center', margin: '20px 0' }}>Start exploring!!</Typography>
+      <Paper elevation={3} sx={{ height: '70vh', display: 'flex', flexDirection: 'column', mt: 6 }}>
         <Box sx={{ flex: 1, overflowY: 'auto', padding: 2 }}>
           {messages.map((message, index) => (
             <Box key={index} sx={{ display: 'flex', justifyContent: message.type === 'user' ? 'flex-end' : 'flex-start', mb: 1 }}>
@@ -65,6 +80,11 @@ const ChatInterface = () => {
           <IconButton color="primary" onClick={sendMessage}>
             <SendIcon />
           </IconButton>
+        </Box>
+        <Box sx={{ padding: 1, display: 'flex', justifyContent: 'center' }}>
+          <Button variant="contained" color="secondary" onClick={terminateChat}>
+            End Chat
+          </Button>
         </Box>
       </Paper>
     </Container>
