@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Box, TextField, IconButton, Typography, Paper, Container, Button } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import { getChatResponse, endSession } from '../api/openaiService';
@@ -49,6 +50,13 @@ const ChatInterface = () => {
 
   return (
     <Container maxWidth="md">
+      <Box sx={{ textAlign: 'right', marginTop: '20px' }}>
+        <Link to="/dashboard" style={{ textDecoration: 'none' }}>
+          <Button variant="contained" color="secondary">
+            View Dashboard
+          </Button>
+        </Link>
+      </Box>
       <Typography variant="h4" style={{ textAlign: 'center', margin: '20px 0' }}>Start exploring!!</Typography>
       <Paper elevation={3} sx={{ height: '70vh', display: 'flex', flexDirection: 'column', mt: 6 }}>
         <Box sx={{ flex: 1, overflowY: 'auto', padding: 2 }}>
